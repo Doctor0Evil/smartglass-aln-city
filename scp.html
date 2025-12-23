@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALN Smart City Infrastructure Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'JetBrains+Mono', monospace;
+            background-color: #050505;
+            color: #00f2ff;
+            overflow-x: hidden;
+        }
+
+        .glass-panel {
+            background: rgba(10, 20, 30, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 242, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.05);
+        }
+
+        .neon-border {
+            border: 1px solid #00f2ff;
+            box-shadow: 0 0 10px #00f2ff, inset 0 0 5px #00f2ff;
+        }
+
+        .grid-cell {
+            aspect-ratio: 1;
+            border: 1px solid rgba(0, 242, 255, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .grid-cell:hover {
+            background: rgba(0, 242, 255, 0.1);
+            border-color: #00f2ff;
+        }
+
+        .node-active {
+            background: radial-gradient(circle, #00f2ff 0%, transparent 70%);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        .neural-wave {
+            height: 2px;
+            background: #00f2ff;
+            width: 100%;
+            transform-origin: left;
+            animation: wave 1s linear infinite;
+        }
+
+        @keyframes wave {
+            0% { transform: scaleX(0); opacity: 1; }
+            100% { transform: scaleX(1); opacity: 0; }
+        }
+
+        /* Neuro-Adaptive High Load State */
+        .high-load-mode {
+            filter: grayscale(0.5) contrast(1.2);
+            border-color: #ff3e3e !important;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div id="app" class="max-w-7xl mx-auto space-y-6">
+        
+        <!-- Header & Neuro-Metrics -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 glass-panel p-6 rounded-xl neon-border">
+            <div>
+                <h1 class="text-2xl font-bold tracking-tighter">ALN.SMART_CITY_PLANNER.v1.0</h1>
+                <p class="text-xs opacity-60">AUGMENTED LOGIC NETWORK // PROJECT: SMARTCITYSTACK</p>
+            </div>
+            
+            <div class="flex gap-8 items-center bg-black/40 p-3 rounded-lg border border-white/10">
+                <div class="text-center">
+                    <div class="text-[10px] opacity-50">NEURAL STRESS</div>
+                    <div id="stress-val" class="text-xl font-bold text-cyan-400">0.12</div>
+                    <div class="w-24 bg-gray-800 h-1 mt-1 rounded-full overflow-hidden">
+                        <div id="stress-bar" class="bg-cyan-400 h-full transition-all duration-500" style="width: 12%"></div>
+                    </div>
+                </div>
+                <div class="text-center border-l border-white/10 pl-8">
+                    <div class="text-[10px] opacity-50">FOCUS INDEX</div>
+                    <div id="focus-val" class="text-xl font-bold text-purple-400">0.88</div>
+                    <div class="w-24 bg-gray-800 h-1 mt-1 rounded-full overflow-hidden">
+                        <div id="focus-bar" class="bg-purple-400 h-full transition-all duration-500" style="width: 88%"></div>
+                    </div>
+                </div>
+                <div class="hidden lg:block border-l border-white/10 pl-8">
+                    <div id="status-badge" class="px-3 py-1 bg-cyan-500/20 rounded text-[10px] animate-pulse">ALN_ACTIVE_SYNC</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Left Panel: Infrastructure Control -->
+            <aside class="lg:col-span-3 space-y-4">
+                <div class="glass-panel p-4 rounded-xl">
+                    <h2 class="text-sm font-bold mb-4 border-b border-cyan-500/30 pb-2">DEPLOYMENT TOOLS</h2>
+                    <div class="grid grid-cols-1 gap-2">
+                        <button onclick="setTool('anchor')" class="tool-btn p-3 rounded bg-cyan-500/10 hover:bg-cyan-500/30 text-xs text-left border border-cyan-500/20 transition-all flex justify-between">
+                            <span>Quantum Anchor</span>
+                            <span class="opacity-50">[-1,0,1]</span>
+                        </button>
+                        <button onclick="setTool('relay')" class="tool-btn p-3 rounded bg-cyan-500/10 hover:bg-cyan-500/30 text-xs text-left border border-cyan-500/20 transition-all flex justify-between">
+                            <span>BCI Relay Tower</span>
+                            <span class="opacity-50">512Hz</span>
+                        </button>
+                        <button onclick="setTool('bio')" class="tool-btn p-3 rounded bg-cyan-500/10 hover:bg-cyan-500/30 text-xs text-left border border-cyan-500/20 transition-all flex justify-between">
+                            <span>Bio-Sensing Zone</span>
+                            <span class="opacity-50">PEDOT</span>
+                        </button>
+                        <button onclick="clearGrid()" class="mt-4 p-2 text-[10px] opacity-40 hover:opacity-100 uppercase tracking-widest text-center">Wipe Local Build</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-xl text-[10px] space-y-2 opacity-80">
+                    <h2 class="text-sm font-bold mb-2 text-cyan-500 uppercase">System Logs</h2>
+                    <div id="console-logs" class="h-48 overflow-y-auto space-y-1 font-mono leading-tight">
+                        <div class="text-cyan-600">[04:44:01] ALN Kernel Initialized.</div>
+                        <div class="text-cyan-600">[04:44:02] Windows Build Pipeline v1.0.4 Ready.</div>
+                        <div class="text-purple-400">[04:44:03] BCI_LINK_Alpha Stream: Active.</div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Panel: Spatial Grid -->
+            <main class="lg:col-span-6 glass-panel rounded-xl overflow-hidden relative min-h-[500px]">
+                <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#00f2ff 1px, transparent 1px); background-size: 20px 20px;"></div>
+                <div id="grid-container" class="grid grid-cols-10 grid-rows-10 w-full h-full p-2">
+                    <!-- Grid cells generated by JS -->
+                </div>
+                
+                <!-- Neuro-Adaptive Overlay -->
+                <div id="adaptive-overlay" class="absolute inset-0 pointer-events-none transition-all duration-1000"></div>
+            </main>
+
+            <!-- Right Panel: ALN Insights -->
+            <aside class="lg:col-span-3 space-y-4">
+                <div class="glass-panel p-4 rounded-xl">
+                    <h2 class="text-sm font-bold mb-4 text-cyan-500 uppercase">GitHub Sync Status</h2>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span>Repo:</span>
+                            <span class="text-cyan-300">SmartCityStack/main</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span>Last Commit:</span>
+                            <span class="font-mono bg-white/5 px-1">ax7f92</span>
+                        </div>
+                        <div class="w-full bg-cyan-950 h-2 rounded-full relative">
+                            <div class="absolute inset-0 bg-cyan-400/20 animate-pulse rounded-full"></div>
+                        </div>
+                        <button onclick="forceSync()" class="w-full py-2 bg-cyan-500 text-black text-[10px] font-bold rounded hover:bg-cyan-400 transition-colors uppercase">Push Neuro-Build</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 rounded-xl">
+                    <h2 class="text-sm font-bold mb-4 text-purple-400 uppercase">3-Brain Integrity</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span>Cranium (Logic)</span>
+                            <span class="text-green-400">OPTIMIZED</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span>Galaxy (Memory)</span>
+                            <span class="text-yellow-400">STABILIZING</span>
+                        </div>
+                        <div class="flex justify-between items-center text-[10px]">
+                            <span>House (Persistence)</span>
+                            <span class="text-cyan-400">SYNCED</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 p-3 bg-black/40 border border-purple-500/20 rounded-lg">
+                        <p class="text-[9px] leading-relaxed italic opacity-70">"Biocompatible software layer executing via PEDOT:PSS substrates in Sector 07-B."</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        // Constants & State
+        const GRID_SIZE = 10;
+        let selectedTool = 'anchor';
+        let neuralStress = 0.12;
+        let focusIndex = 0.88;
+        let logs = document.getElementById('console-logs');
+        
+        // Initialize Grid
+        const container = document.getElementById('grid-container');
+        for (let i = 0; i < GRID_SIZE * GRID_SIZE; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'grid-cell';
+            cell.dataset.index = i;
+            cell.onclick = () => placeNode(cell);
+            container.appendChild(cell);
+        }
+
+        function setTool(tool) {
+            selectedTool = tool;
+            addLog(`Active Tool: ${tool.toUpperCase()} deployment module.`);
+        }
+
+        function placeNode(cell) {
+            if (neuralStress > 0.7) {
+                addLog('BUILD_BLOCKED: Neuro-stress levels exceeding safety thresholds.', 'text-red-500');
+                return;
+            }
+
+            // Remove existing
+            cell.innerHTML = '';
+            cell.className = 'grid-cell node-active';
+            
+            const icon = document.createElement('div');
+            icon.className = 'absolute inset-0 flex items-center justify-center text-[10px] font-bold';
+            
+            if (selectedTool === 'anchor') {
+                icon.textContent = '⚓';
+                cell.style.border = '1px solid #00f2ff';
+                addLog(`Quantum Anchor placed at Cell_${cell.dataset.index}`);
+            } else if (selectedTool === 'relay') {
+                icon.textContent = '📡';
+                cell.style.border = '1px solid #a855f7';
+                addLog(`BCI Relay Tower initialized at Cell_${cell.dataset.index}`);
+            } else if (selectedTool === 'bio') {
+                icon.textContent = '🧬';
+                cell.style.border = '1px solid #4ade80';
+                addLog(`Bio-Sensing Zone active at Cell_${cell.dataset.index}`);
+            }
+            
+            cell.appendChild(icon);
+            
+            // Interaction increases focus, slightly increases stress
+            focusIndex = Math.min(1.0, focusIndex + 0.05);
+            neuralStress = Math.min(1.0, neuralStress + 0.02);
+            updateMetrics();
+        }
+
+        function clearGrid() {
+            document.querySelectorAll('.grid-cell').forEach(c => {
+                c.innerHTML = '';
+                c.className = 'grid-cell';
+                c.style.border = '';
+            });
+            addLog('Grid Wiped. Local build cache cleared.');
+        }
+
+        function addLog(msg, colorClass = 'text-cyan-500') {
+            const entry = document.createElement('div');
+            const time = new Date().toLocaleTimeString([], { hour12: false });
+            entry.className = colorClass;
+            entry.textContent = `[${time}] ${msg}`;
+            logs.prepend(entry);
+        }
+
+        function updateMetrics() {
+            document.getElementById('stress-val').textContent = neuralStress.toFixed(2);
+            document.getElementById('stress-bar').style.width = `${neuralStress * 100}%`;
+            document.getElementById('focus-val').textContent = focusIndex.toFixed(2);
+            document.getElementById('focus-bar').style.width = `${focusIndex * 100}%`;
+
+            // Neuro-Adaptive UI Changes
+            const overlay = document.getElementById('adaptive-overlay');
+            if (neuralStress > 0.6) {
+                overlay.style.boxShadow = `inset 0 0 100px rgba(255, 0, 0, ${neuralStress - 0.5})`;
+                document.body.classList.add('high-load-mode');
+            } else {
+                overlay.style.boxShadow = 'none';
+                document.body.classList.remove('high-load-mode');
+            }
+        }
+
+        function forceSync() {
+            addLog('GitHub Sync Initiated...', 'text-yellow-500');
+            setTimeout(() => {
+                addLog('Verifying Neuro-Session Commit...', 'text-yellow-500');
+                setTimeout(() => {
+                    addLog('SYNC COMPLETE: SmartCityStack updated to latest build.', 'text-green-400');
+                }, 1000);
+            }, 800);
+        }
+
+        // Simulated Neural Drift
+        setInterval(() => {
+            neuralStress = Math.max(0.1, neuralStress - 0.01 + (Math.random() * 0.02));
+            focusIndex = Math.max(0.1, focusIndex - 0.01 + (Math.random() * 0.02));
+            updateMetrics();
+        }, 3000);
+
+        // Initial Run
+        addLog('System online. Neural feedback loop established.');
+    </script>
+</body>
+</html>

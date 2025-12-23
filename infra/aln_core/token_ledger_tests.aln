@@ -1,0 +1,226 @@
+QPU.DATASHARD:/infra/aln_core/token_ledger_tests.aln
+layer,component,path,language,purpose,content
+core,ledger,crates/aln_core/src/energy_ledger.rs,Rust,"test-only in‑memory ledger","#[cfg(test)]
+use std::collections::HashMap;
+
+#[cfg(test)]
+#[derive(Debug, Default, Clone)]
+pub struct InMemoryEnergyLedger {
+    balances: HashMap<[u8; 32], EnergyVector>,
+}
+
+#[cfg(test)]
+impl InMemoryEnergyLedger {
+    pub fn new() -> Self {
+        Self { balances: HashMap::new() }
+    }
+}
+
+#[cfg(test)]
+impl EnergyLedger for InMemoryEnergyLedger {
+    fn credit(&mut self, owner: [u8; 32], delta: EnergyVector) {
+        let entry = self.balances.entry(owner).or_insert_with(EnergyVector::zero);
+        *entry = entry.add(&delta);
+    }
+
+    fn debit(&mut self, owner: [u8; 32], delta: EnergyVector) -> Result<(), EnergyError> {
+        let current = self.balance_of(owner);
+        if !current.vec_geq(&delta) {
+            return Err(EnergyError::InsufficientBalance);
+        }
+        let entry = self.balances.entry(owner).or_insert_with(EnergyVector::zero);
+        *entry = entry.sub(&delta);
+        Ok(())
+    }
+
+    fn balance_of(&self, owner: [u8; 32]) -> EnergyVector {
+        self.balances.get(&owner).cloned().unwrap_or_else(EnergyVector::zero)
+    }
+}"
+core,tests,crates/aln_core/src/token_factory.rs,Rust,"unit test for mint_to_ledger","#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::energy_ledger::InMemoryEnergyLedger;
+
+    #[test]
+    fn token_factory_mint_to_ledger_works() {
+        let mut ledger = InMemoryEnergyLedger::new();
+        let owner: [u8; 32] = [0u8; 32];
+
+        let tf = TokenFactory::default();
+
+        let amt_small = 1_000u128;
+        let amt_big   = 10_000u128;
+
+        tf.mint_to_ledger(&mut ledger, owner, amt_small).unwrap();
+        let bal_small = ledger.balance_of(owner);
+
+        tf.mint_to_ledger(&mut ledger, owner, amt_big).unwrap();
+        let bal_total = ledger.balance_of(owner);
+
+        // Expected split function from project (pseudo):
+        let expected_small = TokenFactory::split_energy(amt_small);
+        let expected_total = TokenFactory::split_energy(amt_small + amt_big);
+
+        assert_eq!(bal_small.csp, expected_small.csp);
+        assert_eq!(bal_small.au_et, expected_small.au_et);
+        assert_eq!(bal_small.erp, expected_small.erp);
+
+        assert_eq!(bal_total.csp, expected_total.csp);
+        assert_eq!(bal_total.au_et, expected_total.au_et);
+        assert_eq!(bal_total.erp, expected_total.erp);
+
+        // Monotonicity: each component must not decrease when amount increases
+        assert!(bal_total.csp >= bal_small.csp);
+        assert!(bal_total.au_et >= bal_small.au_et);
+        assert!(bal_total.erp >= bal_small.erp);
+    }
+}"
+core,wasm,crates/aln_core/Cargo.toml,TOML,"CosmWasm‑friendly deps","[dependencies]
+cosmwasm-std = { version = \"1\", default-features = false, features = [\"staking\"] }
+
+[features]
+default = [\"std\"]
+std = [
+    \"cosmwasm-std/std\",
+    # other std-only deps...
+]
+
+[dependencies.alloc]
+version = \"1\"
+optional = true
+
+[package.metadata.wasm]
+wasm-target = \"wasm32-unknown-unknown\""
+core,tests,crates/aln_core/src/energy_ledger_proptest.rs,Rust,"ledger property‑based tests","#![cfg(test)]
+use super::*;
+use proptest::prelude::*;
+use std::collections::HashSet;
+
+proptest! {
+    #[test]
+    fn credit_then_debit_restores_balance(
+        owner in any::<[u8; 32]>(),
+        csp in 0u128..1_000_000u128,
+        au in 0u128..1_000_000u128,
+        erp in 0u128..1_000_000u128,
+    ) {
+        let mut ledger = InMemoryEnergyLedger::new();
+        let delta = EnergyVector { csp, au_et: au, erp };
+
+        let before = ledger.balance_of(owner);
+        ledger.credit(owner, delta);
+        ledger.debit(owner, delta).unwrap();
+        let after = ledger.balance_of(owner);
+
+        prop_assert_eq!(before, after);
+    }
+
+    #[test]
+    fn debits_never_underflow(
+        owner in any::<[u8; 32]>(),
+        csp in 0u128..1_000_000u128,
+        au in 0u128..1_000_000u128,
+        erp in 0u128..1_000_000u128,
+    ) {
+        let mut ledger = InMemoryEnergyLedger::new();
+        let available = EnergyVector { csp, au_et: au, erp };
+        ledger.credit(owner, available);
+
+        let too_much = EnergyVector {
+            csp: csp.saturating_add(1),
+            au_et: au,
+            erp,
+        };
+
+        let res = ledger.debit(owner, too_much);
+        prop_assert!(res.is_err());
+    }
+
+    #[test]
+    fn total_energy_conserved_except_mint_burn(
+        owners in proptest::collection::vec(any::<[u8; 32]>(), 1..10),
+        credits in proptest::collection::vec((0u128..1_000u128, 0u128..1_000u128, 0u128..1_000u128), 1..20),
+    ) {
+        let mut ledger = InMemoryEnergyLedger::new();
+        let mut owner_set = HashSet::new();
+        for o in &owners { owner_set.insert(*o); }
+
+        let zero = EnergyVector::zero();
+        let total_before = owners.iter().fold(zero, |acc, o| acc.add(&ledger.balance_of(*o)));
+
+        for (i, (csp, au, erp)) in credits.iter().enumerate() {
+            let owner = owners[i % owners.len()];
+            let delta = EnergyVector { csp: *csp, au_et: *au, erp: *erp };
+            ledger.credit(owner, delta);
+            ledger.debit(owner, delta).unwrap();
+        }
+
+        let total_after = owners.iter().fold(zero, |acc, o| acc.add(&ledger.balance_of(*o)));
+        prop_assert_eq!(total_before, total_after);
+    }
+}"
+bridge,mocks,crates/aln_bridge/tests/mock_ubs.rs,Rust,"mock UBS for bridge tests","use aln_ubs::{UBS, SanitizationResult};
+use aln_core::EnergyVector;
+
+#[derive(Clone, Debug)]
+pub struct MockUBS {
+    result: SanitizationResult,
+}
+
+impl MockUBS {
+    pub fn approved(ev: EnergyVector) -> Self {
+        Self { result: SanitizationResult::Approved(ev) }
+    }
+
+    pub fn rejected() -> Self {
+        Self { result: SanitizationResult::Rejected(\"mock rejection\".into()) }
+    }
+}
+
+impl UBS for MockUBS {
+    fn sanitize(&self, _owner: &str, _amount: &EnergyVector) -> SanitizationResult {
+        self.result.clone()
+    }
+}"
+bridge,tests,crates/aln_bridge/tests/claim_tests.rs,Rust,"bridge tests using MockUBS","#[test]
+fn claim_with_valid_merkle_proof_succeeds() {
+    use aln_core::EnergyVector;
+    use crate::bridge::Bridge;
+
+    let approved_ev = EnergyVector::new(100, 50, 25);
+    let mock_ubs = MockUBS::approved(approved_ev.clone());
+
+    let mut bridge = Bridge::new(mock_ubs);
+    // setup merkle tree, proof, etc...
+    let res = bridge.claim(/* args */);
+
+    assert!(res.is_ok());
+    // assert that UBS decision was respected in ledger/claims state...
+}"
+ci,workflow,.github/workflows/aln-ci.yml,YAML,"bridge tests in CI","- name: Run aln_bridge tests
+  run: cargo test -p aln_bridge -- --nocapture"
+docs,invariants,REFRACTOR_DESIGN.md,Markdown,"document ledger invariants","### Ledger invariants & tests
+- Credit followed by equal debit restores owner balance when vec_geq holds.
+- Debits never underflow: implementations must reject any debit where delta exceeds current balance per component.
+- Global conservation: sum of all balances is conserved except when explicit mint or burn operations are invoked.
+- These properties are enforced with unit tests and proptest suites in `crates/aln_core/src/energy_ledger_proptest.rs`."
+routing,wasm,crates/aln_ubs/Cargo.toml,TOML,"no-std & cosmwasm in aln_ubs","[dependencies]
+cosmwasm-std = { version = \"1\", default-features = false }
+
+[features]
+default = [\"std\"]
+std = [
+    \"cosmwasm-std/std\"
+]
+
+[target.'cfg(target_arch = \"wasm32\")'.dependencies]
+getrandom = { version = \"0.2\", features = [\"js\"] }
+
+[dependencies.std-only-logger]
+version = \"0.1\"
+optional = true
+
+[target.'cfg(not(target_arch = \"wasm32\"))'.dependencies]
+std-only-logger = { version = \"0.1\" }
+"
