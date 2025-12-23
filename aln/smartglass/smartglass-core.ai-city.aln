@@ -1,0 +1,230 @@
+aln SMARTGLASS-AI-CITY
+  WITHUNIFIEDSYSTEM OWNERSUPERUSER2025
+
+  META
+    system-name      Smartglass-ALN-City
+    version          1.0.0
+    jurisdiction     multi-city
+    engine           "UE5 / Unity / Godot mixed-reality stack"
+    purpose          "City-scale AR/XR orchestration with hard safety, ethics, and neuromorphic BCI support"
+    license          "Apache-2.0"
+  END META
+
+  # =========================
+  # ROLE / PROFILE MODEL
+  # =========================
+
+  PROFILE planner-safe
+    role                city-planner
+    max-risk-score      0.35
+    allow-destructive   false
+    ar-scope            "zoning, traffic-optimization, non-lethal routing"
+    ui-mode             "desktop+AR"
+  END PROFILE
+
+  PROFILE ops-field
+    role                field-operator
+    max-risk-score      0.20
+    allow-destructive   false
+    ar-scope            "现场 inspection, signage, lane closures, sensor-cal"
+    ui-mode             "Smartglass AR headset"
+  END PROFILE
+
+  PROFILE owner-superuser
+    role                system-owner
+    max-risk-score      0.05
+    allow-destructive   false        # hard-disabled for AR flows
+    ar-scope            "policy-spec, envelope-tuning, simulation-only destructive"
+    ui-mode             "secured ops center wall + BCI console"
+  END PROFILE
+
+  # =========================
+  # SAFETY ENVELOPE FOR AR
+  # =========================
+
+  FUNCTION neuro-cyber-predictive-conflict
+    INPUT
+      scene-state   Object   # fused sensor + city graph
+      candidate-act Object   # proposed AR/AI action
+    END INPUT
+
+    EXECUTE NEURO-ENGINE supercheatneurorealtimepatternupdate \
+      --profile OWNERSUPERUSER2025
+
+    EXECUTE CYBER-ORGANIC supercheatcyberpredictconflict \
+      --scene      scene-state \
+      --candidate  candidate-act \
+      --horizon    "10m" \
+      --out        "/var/aln/smartglass/metrics/smartglass-conflict-score.json"
+
+    RETURN Load("/var/aln/smartglass/metrics/smartglass-conflict-score.json")
+  END FUNCTION
+
+  FUNCTION evaluate-ar-action
+    INPUT
+      actor-profile   PROFILE
+      action-type     Enum: route-change, light-phase, evac-notice, sensor-cal
+      target-zone     Object: geo-id, population-density, criticality-level
+      ai-recommend    Object: model-id, confidence, risk-score
+      scene-state     Object
+    END INPUT
+
+    CONDITION Enforce-ACL
+      IF actor-profile.allow-destructive = true THEN
+        BLOCK "Destructive permissions are not available via Smartglass AR"
+      ENDIF
+    END CONDITION
+
+    CONDITION Risk-Threshold
+      IF ai-recommend.risk-score > actor-profile.max-risk-score THEN
+        BLOCK "AR action rejected: computed risk exceeds profile cap"
+        LOG  "RISK-BLOCK", actor-profile.role, action-type, target-zone.geo-id
+        EXECUTE SYSTEM auditlog --validate --send "/var/log/smartglass/smartglass-risk.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    CONDITION Predictive-Conflict-Guard
+      LET conflict-metrics = neuro-cyber-predictive-conflict(scene-state, ai-recommend)
+      LET conflict-score   = conflict-metrics.score
+      LET conflict-class   = conflict-metrics.class
+
+      IF conflict-score >= 0.40 THEN
+        BLOCK "AR action vetoed by Neuro-Cyber Predictive Conflict Filter"
+        TAG-SESSION "NCPF-BLOCK"
+        LOG "NCPF-BLOCK", conflict-score, conflict-class, target-zone.geo-id
+        EXECUTE SYSTEM auditlog --validate --send "/var/log/smartglass/smartglass-ncpf.log"
+        RETURN "DENY"
+      ENDIF
+
+      IF conflict-score >= 0.20 THEN
+        TAG-SESSION "NCPF-THROTTLED"
+        LOG "NCPF-THROTTLE", conflict-score, conflict-class, target-zone.geo-id
+      ENDIF
+    END CONDITION
+
+    CONDITION Criticality-Guard
+      IF target-zone.criticality-level >= 4 THEN
+        REQUIRE MultiHumanReview(2)
+        TAG-SESSION "HUMAN-OVERSIGHT-REQUIRED"
+      ENDIF
+    END CONDITION
+
+    RETURN "ALLOW"
+  END FUNCTION
+
+  FUNCTION apply-ar-action
+    INPUT
+      decision       String
+      action-payload Object
+    END INPUT
+
+    IF decision != "ALLOW" THEN
+      ABORT "AR action not applied; decision != ALLOW"
+    ENDIF
+
+    EXECUTE SYSTEM sandbox-apply-change \
+      --payload       action-payload \
+      --reversible    true \
+      --max-duration  "15m" \
+      --log           "/var/log/smartglass/smartglass-sandbox-actions.log"
+
+    EXECUTE SYSTEM auditlog --validate --send "/var/log/smartglass/smartglass-actions.log"
+  END FUNCTION
+
+  # =========================
+  # NETWORK GUARD SERVICE
+  # =========================
+
+  SERVICE smartglass-link
+    endpoints
+      - name          sg-primary-5g
+        type          telecom-slice
+        qos-class     critical-ar
+        encryption    tls1.3-mutual
+        mfa-required  true
+        route-domain  "city-core-net"
+      - name          sg-mesh-fallback
+        type          mesh-encrypted
+        qos-class     life-safety
+        encryption    aln-quantum-hybrid
+        mfa-required  true
+        route-domain  "city-emerg-mesh"
+    END endpoints
+
+    HEALTH-CHECK
+      interval "5s"
+      EXECUTE SYSTEM checklink \
+        --service smartglass-link \
+        --log     "/var/log/smartglass/smartglass-link-health.log"
+    END HEALTH-CHECK
+
+    ON-ANOMALY
+      EXECUTE CORE-HERCULES supercheatsystemlockdownentirenetwork \
+        --profile OWNERSUPERUSER2025 \
+        --reason  "Smartglass link anomaly"
+      EXECUTE SYSTEM auditlog --validate --send "/var/log/smartglass/smartglass-net-incident.log"
+    END ON-ANOMALY
+  END SERVICE
+
+  # =========================
+  # BCI / NEUROMORPHIC INTERFACE HOOKS
+  # =========================
+
+  DEVICE-CLASS smartglass-bci-headset
+    vendor-id        "AUGUSER-LABS-NEURO-001"
+    hardware-rev     "2.3.7"
+    neuromorphic-die "NANO-SPIKE-48C-HEX"
+    channels-total   256
+    sampling-hz      2048
+    transport        "USB-C/DP + QKD-sidechannel"
+    firmware-policy  "signed-only"
+  END DEVICE-CLASS
+
+  FUNCTION bind-bci-session
+    INPUT
+      user-id        String
+      device-id      String
+      device-class   DEVICE-CLASS
+    END INPUT
+
+    EXECUTE SYSTEM verify-device-attestation \
+      --device-id    device-id \
+      --class        device-class.vendor-id \
+      --policy       "signed-only"
+
+    EXECUTE SYSTEM derive-ephemeral-keys \
+      --user         user-id \
+      --device       device-id \
+      --out          "/var/aln/smartglass/keys/bci-session.hex"
+
+    TAG-SESSION "BCI-BOUND"
+    RETURN Load("/var/aln/smartglass/keys/bci-session.hex")
+  END FUNCTION
+
+  FUNCTION route-bci-intent-to-ar-safe
+    INPUT
+      bci-intent     Object   # decoded from neuromorphic spike patterns
+      actor-profile  PROFILE
+      scene-state    Object
+    END INPUT
+
+    LET coarse-action = MapBCIIntentToARAction(bci-intent)
+
+    LET decision = evaluate-ar-action(
+      actor-profile,
+      coarse-action.type,
+      coarse-action.target-zone,
+      coarse-action.ai-recommend,
+      scene-state
+    )
+
+    IF decision != "ALLOW" THEN
+      RETURN { status: "DENY", reason: "Envelope veto or conflict detected" }
+    ENDIF
+
+    apply-ar-action("ALLOW", coarse-action.payload)
+    RETURN { status: "APPLIED", reversible: true }
+  END FUNCTION
+
+END aln
