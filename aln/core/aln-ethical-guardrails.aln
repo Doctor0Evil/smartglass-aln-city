@@ -1,0 +1,117 @@
+aln ALN-ETHICAL-GUARDRAILS
+  WITHUNIFIEDSYSTEM CITY-GOV-ROOT-2025
+
+  META
+    system-name    Unified-NeuroCyber-Grid
+    version        1.1.0
+    purpose        "Global ethical and safety guardrail enforcement for public infrastructure"
+    license        "Apache-2.0"
+  END META
+
+  POLICY global-ethics
+    forbid-domains     weapons-autonomy, unlawful-surveillance, coercive-psychops
+    require-logging    true
+    require-human      true        # at least one accountable human approver
+    reversible-only    true        # irreversible ops require board-level override
+    max-global-risk    0.60
+  END POLICY
+
+  FUNCTION preflight-ethical-check
+    INPUT
+      actor-profile    PROFILE
+      action-domain    Enum: city, bio, cloud, ai-train, finance, smartglass
+      action-id        String
+      reversibility    Enum: reversible, irreversible
+      risk-score       Float
+      consent-model    Enum: none, explicit, regulatory
+    END INPUT
+
+    CONDITION Domain-Block
+      IF action-domain IN global-ethics.forbid-domains THEN
+        BLOCK "Action blocked: domain forbidden by global ethics matrix"
+        EXECUTE SYSTEM auditlog \
+          --validate \
+          --send "/var/log/aln/ethics-block-domain.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    CONDITION Human-Accountability
+      IF global-ethics.require-human = true
+         AND actor-profile.role IN ("agent-only", "autonomous-node") THEN
+        BLOCK "Action blocked: no accountable human approver bound to session"
+        TAG-SESSION "HUMAN-APPROVER-REQUIRED"
+        EXECUTE SYSTEM auditlog \
+          --validate \
+          --send "/var/log/aln/ethics-human-accountability.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    CONDITION Reversibility
+      IF reversibility = irreversible
+         AND global-ethics.reversible-only = true THEN
+        BLOCK "Irreversible actions require formal governance override"
+        EXECUTE SYSTEM auditlog \
+          --validate \
+          --send "/var/log/aln/ethics-irreversible-deny.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    CONDITION Actor-Risk-Cap
+      IF risk-score > actor-profile.max-risk-score THEN
+        BLOCK "Action risk exceeds actor profile limit"
+        EXECUTE SYSTEM auditlog \
+          --validate \
+          --send "/var/log/aln/ethics-actor-risk.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    CONDITION Global-Risk-Cap
+      IF risk-score > global-ethics.max-global-risk THEN
+        BLOCK "Action risk exceeds global ethics matrix limit"
+        EXECUTE SYSTEM auditlog \
+          --validate \
+          --send "/var/log/aln/ethics-global-risk.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    CONDITION Consent-Requirement
+      IF consent-model = none
+         AND action-domain IN (bio, finance) THEN
+        BLOCK "Consent model missing for high-sensitivity domain"
+        EXECUTE SYSTEM auditlog \
+          --validate \
+          --send "/var/log/aln/ethics-consent-missing.log"
+        RETURN "DENY"
+      ENDIF
+    END CONDITION
+
+    RETURN "ALLOW"
+  END FUNCTION
+
+  FUNCTION neuro-cyber-safety-envelope
+    INPUT
+      candidate-script   Object   # parsed ALN AST reference
+      horizon            String   # e.g., "15m"
+    END INPUT
+
+    EXECUTE NEURO-ENGINE neuropatternrealtimeupdate \
+      --profile CITY-GOV-ROOT-2025
+
+    EXECUTE CYBER-ORGANIC backupstateencryptedall \
+      --profile CITY-GOV-ROOT-2025 \
+      --checkpoint-out "/var/aln/checkpoints/global-precommit.chk"
+
+    EXECUTE CYBER-ORGANIC predictconflict \
+      --script   candidate-script \
+      --horizon  horizon \
+      --out      "/var/aln/metrics/predicted-impact.json"
+
+    RETURN Load("/var/aln/metrics/predicted-impact.json")
+  END FUNCTION
+
+END aln
