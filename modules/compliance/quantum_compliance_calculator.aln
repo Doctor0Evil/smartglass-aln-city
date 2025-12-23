@@ -1,3 +1,4 @@
+﻿aln QUANTUM_COMPLIANCE_CALCULATOR
 MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
   manifest:
     author_did: did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
@@ -32,9 +33,9 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
       - "STEP_4: Compile circuit to statevector representation Q(e)"
       - "STEP_5: Normalize to unit length in Hilbert space: ||Q(e)|| = 1"
     mathematical_form: |
-      Q(e) = Σ(i=1 to N) α_i |ψ_i⟩
-      where α_i are complex amplitudes satisfying Σ|α_i|² = 1
-      and |ψ_i⟩ are basis states representing policy clauses
+      Q(e) = Î£(i=1 to N) Î±_i |Ïˆ_iâŸ©
+      where Î±_i are complex amplitudes satisfying Î£|Î±_i|Â² = 1
+      and |Ïˆ_iâŸ© are basis states representing policy clauses
     complexity: "O(2^m) where m is policy expression depth, optimized via sparse representation"
   
   tensorization_input_data:
@@ -42,46 +43,46 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
     description: "Maps data vector to quantum tensor representation in dual space"
     algorithm:
       - "STEP_1: Normalize data_input_set to [0, 1] range per dimension"
-      - "STEP_2: Apply feature scaling: z_i = (x_i - μ_i) / σ_i"
-      - "STEP_3: Construct tensor product representation: T(d) = ⊗(i=1 to n) |d_i⟩"
-      - "STEP_4: Compute bra vector: ⟨T(d)| for inner product evaluation"
+      - "STEP_2: Apply feature scaling: z_i = (x_i - Î¼_i) / Ïƒ_i"
+      - "STEP_3: Construct tensor product representation: T(d) = âŠ—(i=1 to n) |d_iâŸ©"
+      - "STEP_4: Compute bra vector: âŸ¨T(d)| for inner product evaluation"
     mathematical_form: |
-      T(d) = |d_1⟩ ⊗ |d_2⟩ ⊗ ... ⊗ |d_n⟩
-      ⟨T(d)| T(d)⟩ = 1 (normalization constraint)
+      T(d) = |d_1âŸ© âŠ— |d_2âŸ© âŠ— ... âŠ— |d_nâŸ©
+      âŸ¨T(d)| T(d)âŸ© = 1 (normalization constraint)
     complexity: "O(n) for tensor construction, O(n log n) for normalization"
   
   core_compliance_function:
     function: "C = compliance_calculate(Q, T, encryption_level, audit_cycles, risk_score, jurisdiction, entropy)"
     description: "Quantum compliance calculation using operators, exponentials, and logarithmic modulation"
     mathematical_form: |
-      C = ⟨Q(e) | T(d)⟩ × 
-          exp(-risk_assessment_score) × 
-          log(1 + audit_cycles_per_year) × 
-          jurisdiction_factor × 
-          encryption_level^0.75 × 
-          quantum_entropy_factor²
+      C = âŸ¨Q(e) | T(d)âŸ© Ã— 
+          exp(-risk_assessment_score) Ã— 
+          log(1 + audit_cycles_per_year) Ã— 
+          jurisdiction_factor Ã— 
+          encryption_level^0.75 Ã— 
+          quantum_entropy_factorÂ²
     
     components_explanation:
-      inner_product: "⟨Q(e) | T(d)⟩ measures alignment between policy and data, range [-1, 1]"
+      inner_product: "âŸ¨Q(e) | T(d)âŸ© measures alignment between policy and data, range [-1, 1]"
       risk_exponential: "exp(-risk_assessment_score) exponentially penalizes high-risk contexts"
       audit_logarithm: "log(1 + audit_cycles_per_year) rewards frequent auditing with diminishing returns"
       jurisdiction_weighting: "jurisdiction_factor scales for regulatory environment complexity"
       encryption_scaling: "encryption_level^0.75 provides sublinear reward for encryption strength"
-      entropy_quadratic: "quantum_entropy_factor² amplifies quantum resistance contributions"
+      entropy_quadratic: "quantum_entropy_factorÂ² amplifies quantum resistance contributions"
     
     algorithm:
-      - "STEP_1: Compute quantum inner product IP = ⟨Q(e) | T(d)⟩"
+      - "STEP_1: Compute quantum inner product IP = âŸ¨Q(e) | T(d)âŸ©"
       - "STEP_2: Apply risk exponential: R = exp(-risk_assessment_score)"
       - "STEP_3: Calculate audit logarithm: A = log(1 + audit_cycles_per_year)"
       - "STEP_4: Apply jurisdiction factor: J = jurisdiction_factor"
       - "STEP_5: Compute encryption scaling: E = encryption_level^0.75"
-      - "STEP_6: Calculate entropy amplification: H = quantum_entropy_factor²"
-      - "STEP_7: Multiply all components: C = IP × R × A × J × E × H"
+      - "STEP_6: Calculate entropy amplification: H = quantum_entropy_factorÂ²"
+      - "STEP_7: Multiply all components: C = IP Ã— R Ã— A Ã— J Ã— E Ã— H"
       - "STEP_8: Handle numerical stability (check for overflow/underflow)"
     
     bounds:
       minimum: "0 (complete non-compliance or zero-risk trivial case)"
-      maximum: "C_max = 1 × 1 × log(1 + 365) × 10 × 512^0.75 × 100² ≈ 4.8 × 10^8 (theoretical)"
+      maximum: "C_max = 1 Ã— 1 Ã— log(1 + 365) Ã— 10 Ã— 512^0.75 Ã— 100Â² â‰ˆ 4.8 Ã— 10^8 (theoretical)"
       typical_range: "10^3 to 10^6 for real-world scenarios"
   
   normalization_compliance_score:
@@ -116,32 +117,32 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
     function: "quantum_resistance_value = calc_quantum_resistance(entropy_factor, audit_cycles)"
     description: "Measures system's resistance to quantum computing attacks"
     mathematical_form: |
-      quantum_resistance_value = quantum_entropy_factor × √(audit_cycles_per_year)
+      quantum_resistance_value = quantum_entropy_factor Ã— âˆš(audit_cycles_per_year)
     algorithm:
       - "STEP_1: Extract quantum_entropy_factor (typically 1-100 based on crypto algorithm)"
       - "STEP_2: Compute square root of audit_cycles_per_year"
-      - "STEP_3: Multiply: QR = entropy × √(audits)"
+      - "STEP_3: Multiply: QR = entropy Ã— âˆš(audits)"
       - "STEP_4: Normalize to resistance class"
     resistance_classes:
       - "[0, 10): VULNERABLE - Classical algorithms, no quantum resistance"
       - "[10, 50): TRANSITIONAL - Hybrid schemes, limited quantum protection"
       - "[50, 200): RESISTANT - Post-quantum algorithms, moderate key sizes"
-      - "[200, ∞): QUANTUM_SECURE - CRYSTALS-Kyber/Dilithium, large key sizes"
+      - "[200, âˆž): QUANTUM_SECURE - CRYSTALS-Kyber/Dilithium, large key sizes"
   
   auditability_vector:
     function: "auditability_vector = grad_C(p_1, p_2, ..., p_k)"
     description: "Gradient sensitivity analysis identifying parameters with highest compliance impact"
     mathematical_form: |
-      auditability_vector_i = ∂C / ∂p_i
-      where p_i ∈ {risk_score, encryption_level, audit_cycles, jurisdiction, entropy}
+      auditability_vector_i = âˆ‚C / âˆ‚p_i
+      where p_i âˆˆ {risk_score, encryption_level, audit_cycles, jurisdiction, entropy}
     algorithm:
-      - "STEP_1: Compute partial derivative ∂C/∂risk_score using finite differences"
-      - "STEP_2: Compute ∂C/∂encryption_level numerically"
-      - "STEP_3: Compute ∂C/∂audit_cycles_per_year"
-      - "STEP_4: Compute ∂C/∂jurisdiction_factor"
-      - "STEP_5: Compute ∂C/∂quantum_entropy_factor"
-      - "STEP_6: Construct vector: A = [∂C/∂p_1, ∂C/∂p_2, ..., ∂C/∂p_k]"
-      - "STEP_7: Normalize to unit length: Â = A / ||A||"
+      - "STEP_1: Compute partial derivative âˆ‚C/âˆ‚risk_score using finite differences"
+      - "STEP_2: Compute âˆ‚C/âˆ‚encryption_level numerically"
+      - "STEP_3: Compute âˆ‚C/âˆ‚audit_cycles_per_year"
+      - "STEP_4: Compute âˆ‚C/âˆ‚jurisdiction_factor"
+      - "STEP_5: Compute âˆ‚C/âˆ‚quantum_entropy_factor"
+      - "STEP_6: Construct vector: A = [âˆ‚C/âˆ‚p_1, âˆ‚C/âˆ‚p_2, ..., âˆ‚C/âˆ‚p_k]"
+      - "STEP_7: Normalize to unit length: Ã‚ = A / ||A||"
       - "STEP_8: Rank parameters by absolute gradient magnitude"
     interpretation:
       - "High gradient magnitude: Parameter has strong impact on compliance"
@@ -197,14 +198,14 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
       - detailed_report: "Human-readable compliance assessment"
     
     algorithm:
-      - "STEP_1: Quantum encode policy → Q(e) = expr_encode(policy)"
-      - "STEP_2: Tensorize data → T(d) = tensorize(data)"
-      - "STEP_3: Compute raw compliance → C = ⟨Q(e)|T(d)⟩ × exp(-risk) × log(1+audits) × jurisdiction × encryption^0.75 × entropy²"
-      - "STEP_4: Normalize → compliance_score = C / C_max"
-      - "STEP_5: Calculate risk → risk_violation_metric = 1 - compliance_score"
-      - "STEP_6: Quantum resistance → QR = entropy × √(audits)"
-      - "STEP_7: Compute gradients → auditability_vector = [∂C/∂p_i]"
-      - "STEP_8: Generate recommendation → recommendation = threshold_classify(compliance_score)"
+      - "STEP_1: Quantum encode policy â†’ Q(e) = expr_encode(policy)"
+      - "STEP_2: Tensorize data â†’ T(d) = tensorize(data)"
+      - "STEP_3: Compute raw compliance â†’ C = âŸ¨Q(e)|T(d)âŸ© Ã— exp(-risk) Ã— log(1+audits) Ã— jurisdiction Ã— encryption^0.75 Ã— entropyÂ²"
+      - "STEP_4: Normalize â†’ compliance_score = C / C_max"
+      - "STEP_5: Calculate risk â†’ risk_violation_metric = 1 - compliance_score"
+      - "STEP_6: Quantum resistance â†’ QR = entropy Ã— âˆš(audits)"
+      - "STEP_7: Compute gradients â†’ auditability_vector = [âˆ‚C/âˆ‚p_i]"
+      - "STEP_8: Generate recommendation â†’ recommendation = threshold_classify(compliance_score)"
       - "STEP_9: Assemble report with DID signature"
       - "STEP_10: Record to immutable ledger"
   
@@ -222,14 +223,14 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
         calculation:
           Q_e: "Quantum encoding produces statevector of dimension 8"
           T_d: "Tensor product of 4-dimensional data vector"
-          inner_product: "⟨Q(e)|T(d)⟩ = 0.94"
+          inner_product: "âŸ¨Q(e)|T(d)âŸ© = 0.94"
           risk_exp: "exp(-0.35) = 0.705"
           audit_log: "log(1 + 12) = 2.565"
           encryption_scale: "256^0.75 = 90.51"
-          entropy_square: "15.0² = 225"
-          C_raw: "0.94 × 0.705 × 2.565 × 2.5 × 90.51 × 225 = 86,342"
-          C_max: "1.0 × 1.0 × 2.565 × 10 × 512^0.75 × 100² = 4.12 × 10^7"
-          compliance_score: "86,342 / 4.12×10^7 = 0.0021 (needs parameter tuning)"
+          entropy_square: "15.0Â² = 225"
+          C_raw: "0.94 Ã— 0.705 Ã— 2.565 Ã— 2.5 Ã— 90.51 Ã— 225 = 86,342"
+          C_max: "1.0 Ã— 1.0 Ã— 2.565 Ã— 10 Ã— 512^0.75 Ã— 100Â² = 4.12 Ã— 10^7"
+          compliance_score: "86,342 / 4.12Ã—10^7 = 0.0021 (needs parameter tuning)"
           # NOTE: In practice, C_max would be calibrated to typical values
           recommendation: "After calibration: COMPLIANCE_ACCEPTED"
     
@@ -244,13 +245,13 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
           jurisdiction_factor: 3.8 # EU multi-jurisdiction
           quantum_entropy_factor: 45.0 # post-quantum encryption
         calculation:
-          inner_product: "⟨Q(e)|T(d)⟩ = 0.86"
+          inner_product: "âŸ¨Q(e)|T(d)âŸ© = 0.86"
           risk_exp: "exp(-0.22) = 0.803"
           audit_log: "log(1 + 52) = 3.970"
           encryption_scale: "512^0.75 = 181.02"
-          entropy_square: "45.0² = 2,025"
-          C_raw: "0.86 × 0.803 × 3.970 × 3.8 × 181.02 × 2,025 = 3.84 × 10^6"
-          quantum_resistance: "45.0 × √52 = 324.5 (QUANTUM_SECURE)"
+          entropy_square: "45.0Â² = 2,025"
+          C_raw: "0.86 Ã— 0.803 Ã— 3.970 Ã— 3.8 Ã— 181.02 Ã— 2,025 = 3.84 Ã— 10^6"
+          quantum_resistance: "45.0 Ã— âˆš52 = 324.5 (QUANTUM_SECURE)"
           recommendation: "COMPLIANCE_ACCEPTED with strong quantum resistance"
     
     - example_3_noncompliant_system:
@@ -264,13 +265,13 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
           jurisdiction_factor: 1.5 # low regulatory pressure
           quantum_entropy_factor: 5.0 # vulnerable to quantum attacks
         calculation:
-          inner_product: "⟨Q(e)|T(d)⟩ = 0.45"
+          inner_product: "âŸ¨Q(e)|T(d)âŸ© = 0.45"
           risk_exp: "exp(-0.78) = 0.458"
           audit_log: "log(1 + 2) = 1.099"
           encryption_scale: "128^0.75 = 42.22"
-          entropy_square: "5.0² = 25"
-          C_raw: "0.45 × 0.458 × 1.099 × 1.5 × 42.22 × 25 = 292"
-          quantum_resistance: "5.0 × √2 = 7.07 (VULNERABLE)"
+          entropy_square: "5.0Â² = 25"
+          C_raw: "0.45 Ã— 0.458 Ã— 1.099 Ã— 1.5 Ã— 42.22 Ã— 25 = 292"
+          quantum_resistance: "5.0 Ã— âˆš2 = 7.07 (VULNERABLE)"
           recommendation: "COMPLIANCE_REJECTED_IMMEDIATE_ACTION_REQUIRED"
           remediation_priorities: 
             - "Increase audit_cycles_per_year to 12 minimum"
@@ -286,15 +287,15 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
         priority: "1 (HIGHEST)"
       - parameter: "encryption_level"
         gradient: "+1.71"
-        interpretation: "Doubling encryption increases C by ~220 (128→256)"
+        interpretation: "Doubling encryption increases C by ~220 (128â†’256)"
         priority: "2 (HIGH)"
       - parameter: "audit_cycles_per_year"
         gradient: "+49.6"
-        interpretation: "Increasing audits from 2→12 increases C by ~248"
+        interpretation: "Increasing audits from 2â†’12 increases C by ~248"
         priority: "3 (HIGH)"
       - parameter: "quantum_entropy_factor"
         gradient: "+11.68"
-        interpretation: "Post-quantum crypto (5→45) increases C by ~467"
+        interpretation: "Post-quantum crypto (5â†’45) increases C by ~467"
         priority: "4 (MEDIUM)"
       - parameter: "jurisdiction_factor"
         gradient: "+194.7"
@@ -323,7 +324,7 @@ MODULE QUANTUM_COMPLIANCE_CALCULATOR_ALN
     computation_time:
       - "Quantum encoding: O(2^m) but optimized to <100ms for typical policies"
       - "Tensorization: O(n log n) typically <50ms"
-      - "Inner product: O(N×n) where N is Hilbert space dimension, <200ms"
+      - "Inner product: O(NÃ—n) where N is Hilbert space dimension, <200ms"
       - "Compliance calculation: O(1) arithmetic operations, <10ms"
       - "Gradient computation: O(k) where k is parameter count, <50ms"
       - "Total typical latency: <500ms for full evaluation"

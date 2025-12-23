@@ -1,3 +1,4 @@
+﻿aln CI_VALIDATION_LINT_GITHUB
 ALN_GRAMMAR CI_VALIDATION_LINT_GITHUB
   metadata:
     description: "Comprehensive ALN grammar for GitHub CI validation, linting, compliance enforcement, and continuous evolution. Designed for cross-platform adaptation, autonomy, ethics enforcement, and security architecture refinement."

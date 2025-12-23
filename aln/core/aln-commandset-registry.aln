@@ -1,0 +1,64 @@
+﻿aln ALN-COMMANDSET-REGISTRY
+  WITHUNIFIEDSYSTEM CITY-GOV-ROOT-2025
+\r\n\ \ META\\n\ \ author_did\ \ \ \ did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0\r\n\ \ \ \ system-name\ \ \ \ ALN-Commandset-Registry\r\n\ \ \ \ version\ \ \ \ \ \ \ \ 1\.0\.0\r\n\ \ \ \ purpose\ \ \ \ \ \ \ \ "Machine-readable\ command\ metadata\ for\ AI\ and\ IDE\ tooling"\r\n\ \ END\ META
+
+  COMMANDSET traffic-grid-v1
+    title          "City Traffic Grid Control"
+    domain         city
+    version        "1.0.0"
+    safety-level   "critical"
+    commands
+      - name       propose-light-phase-change
+        reversible true
+        params
+          - id     intersection-id
+            type   String
+          - id     new-phase-plan-id
+            type   String
+          - id     risk-score
+            type   Float
+        examples
+          - "EXECUTE CITY propose-light-phase-change --intersection-id X123 --new-phase-plan-id PLAN_A --risk-score 0.12"
+      - name       propose-route-detour
+        reversible true
+        params
+          - id     route-id
+            type   String
+          - id     detour-path-id
+            type   String
+          - id     risk-score
+            type   Float
+    END commands
+  END COMMANDSET
+
+  COMMANDSET smartglass-ui-v1
+    title          "Smartglass AR/XR Interaction"
+    domain         smartglass
+    version        "1.0.0"
+    safety-level   "controlled"
+    commands
+      - name       open-layer
+        reversible true
+        params
+          - id     layer-id
+            type   String
+      - name       highlight-zone
+        reversible true
+        params
+          - id     geo-id
+            type   String
+          - id     severity
+            type   Enum: info, warning, critical
+      - name       propose-action
+        reversible true
+        params
+          - id     action-domain
+            type   Enum: city, bio, cloud, ai-train, finance, smartglass
+          - id     action-id
+            type   String
+          - id     payload-ref
+            type   String
+    END commands
+  END COMMANDSET
+
+END aln

@@ -62,6 +62,54 @@ jobs:
           path: aln-validation.json
 ```
 
+## Local tools and autofix
+We've added small PowerShell helpers to run validation and apply conservative autofixes locally.
+
+- Validate only (produces `aln-validation.json`):
+```powershell
+pwsh -File .\tools\aln-validate\validate-aln.ps1
+```
+
+- Apply safe metadata fixes (DID insertion and header fixes):
+```powershell
+pwsh -File .\tools\aln-fix\fix-aln-metadata.ps1
+```
+
+- Flag Python-like constructs for human review (idempotent):
+```powershell
+pwsh -File .\tools\aln-fix\check-forbidden-constructs.ps1
+```
+
+Run validate, then fix, then validate again to confirm a clean state (except for known-flagged files).
+
+---
+
+## Local ALN validation workflow
+Copy/paste these commands to run a local validation + autofix cycle:
+
+```powershell
+pwsh -File .\tools\aln-validate\validate-aln.ps1
+pwsh -File .\tools\aln-fix\fix-aln-metadata.ps1
+pwsh -File .\tools\aln-fix\check-forbidden-constructs.ps1
+pwsh -File .\tools\aln-validate\validate-aln.ps1
+```
+
+- Run the first `validate-aln.ps1` before opening a PR to see current violations (read-only).
+- Run `fix-aln-metadata.ps1` when the validator reports missing DIDs or headers (idempotent; safe).
+- Run `check-forbidden-constructs.ps1` to insert TODO/REVIEW markers for manual review of Python-like constructs.
+- Re-run the `validate` step to confirm no unflagged forbidden tokens remain.
+
+**Note:** The canonical DID is stored in `config/did.identity.aln` and is a public identifier only; do not store signing keys or private credentials in this repo. See `config/did.identity.aln` for the declared DID and usage notes.
+
+## Optional: Git hook installation (Windows / POSIX)
+A helper script `tools/hooks/pre-commit-aln.ps1` is provided. To enable locally:
+
+- Windows (PowerShell):
+  - Copy `tools\hooks\pre-commit-aln.ps1` to `.git\hooks\pre-commit` and ensure it is executable. The script will run the validator and attempt autofix for metadata before commit.
+- POSIX (using Bash wrapper):
+  - Create a `.git/hooks/pre-commit` script that runs `pwsh -File tools/hooks/pre-commit-aln.ps1` and make it executable.
+
+This hook is optional but recommended for a smoother developer experience.
 ## Metrics to Output (Roadmap)
 - Module count
 - Average lines per ALN file

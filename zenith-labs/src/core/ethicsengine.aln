@@ -1,3 +1,8 @@
+﻿aln ETHICSENGINE
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 // Destination: [translate:zenith-labs/src/core/ethicsengine.aln]
 TITLE [translate:Ethics Engine: Anti-Greed, Trust, Audit]
 function notifyadminevent(type, entityid) = NotificationSystem.sendevent(type, entityid)
@@ -8,3 +13,4 @@ function evaluateentity(profile)
     return APPROVED, [translate:"Compliant"]
 HOOKS: [translate:audittrail], [translate:accesscontrol]
 HEX: [translate:1A9F8C3B2E1D0A772340B]
+

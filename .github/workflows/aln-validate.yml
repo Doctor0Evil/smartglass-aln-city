@@ -1,0 +1,18 @@
+name: ALN Validation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: ALN Validate (read-only)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run ALN validator
+        run: pwsh -NoProfile -ExecutionPolicy Bypass -File ./tools/aln-validate/validate-aln.ps1

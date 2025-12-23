@@ -1,3 +1,8 @@
+﻿aln IOT_REGISTER
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 [iot_register]
 Processes input:
     - biometrics: object (ISO/IEC 30107 template for biometric data)
@@ -13,3 +18,4 @@ Enforces logging:
     - Stores logs at: /audit/iot_devices/${device_mac}/
 Manages lifecycle: provisions devices, rotates keys, revokes access
 Enforces security_policy: zero-trust model, biometric/blockchain binding, destruction endpoint
+

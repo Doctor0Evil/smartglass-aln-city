@@ -1,3 +1,8 @@
+﻿aln PRIVATE_AI_STREAM
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 [private_ai_stream]
 Processes input:
     - stream_id: string (stream identifier or unique label)
@@ -16,3 +21,4 @@ Enforces logging:
 Manages data_retention: jurisdiction-based (location-specific), encrypted storage, time-restricted purge
 Applies backup_policy: encrypted, versioned backups, remote vault storage
 Enforces security_policy: access revocation mechanisms, tamperproof ledger (immutable record)
+

@@ -1,0 +1,42 @@
+﻿aln SMARTGLASS-UI-CONTRACTS
+  WITHUNIFIEDSYSTEM CITY-GOV-ROOT-2025
+\r\n\ \ META\\n\ \ author_did\ \ \ \ did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0\r\n\ \ \ \ system-name\ \ \ \ Smartglass-UI-Contracts\r\n\ \ \ \ version\ \ \ \ \ \ \ \ 1\.0\.0\r\n\ \ \ \ purpose\ \ \ \ \ \ \ \ "Typed\ contracts\ between\ Smartglass\ clients\ and\ ALN\ services"\r\n\ \ END\ META
+
+  STRUCT UIGeoZone
+    geo-id                String
+    population-density    Float
+    criticality-level     Int
+  END STRUCT
+
+  STRUCT UIActionProposal
+    actor-id              String
+    actor-role            String
+    action-domain         Enum: city, bio, cloud, ai-train, finance, smartglass
+    action-id             String
+    payload-ref           String
+    risk-score            Float
+    reversibility         Enum: reversible, irreversible
+    consent-model         Enum: none, explicit, regulatory
+    target-zone           UIGeoZone
+  END STRUCT
+
+  FUNCTION ui-proposal-to-aln
+    INPUT
+      proposal   UIActionProposal
+    END INPUT
+
+    LET profile = ResolveProfile(proposal.actor-id, proposal.actor-role)
+
+    RETURN {
+      actor-profile  : profile,
+      action-domain  : proposal.action-domain,
+      action-id      : proposal.action-id,
+      payload-ref    : proposal.payload-ref,
+      risk-score     : proposal.risk-score,
+      reversibility  : proposal.reversibility,
+      consent-model  : proposal.consent-model,
+      target-zone    : proposal.target-zone
+    }
+  END FUNCTION
+
+END aln

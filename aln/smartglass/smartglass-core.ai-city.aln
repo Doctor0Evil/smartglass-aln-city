@@ -1,14 +1,6 @@
-aln SMARTGLASS-AI-CITY
+﻿aln SMARTGLASS-AI-CITY
   WITHUNIFIEDSYSTEM OWNERSUPERUSER2025
-
-  META
-    system-name      Smartglass-ALN-City
-    version          1.0.0
-    jurisdiction     multi-city
-    engine           "UE5 / Unity / Godot mixed-reality stack"
-    purpose          "City-scale AR/XR orchestration with hard safety, ethics, and neuromorphic BCI support"
-    license          "Apache-2.0"
-  END META
+\r\n\ \ META\\n\ \ author_did\ \ \ \ did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0\r\n\ \ \ \ system-name\ \ \ \ \ \ Smartglass-ALN-City\r\n\ \ \ \ version\ \ \ \ \ \ \ \ \ \ 1\.0\.0\r\n\ \ \ \ jurisdiction\ \ \ \ \ multi-city\r\n\ \ \ \ engine\ \ \ \ \ \ \ \ \ \ \ "UE5\ /\ Unity\ /\ Godot\ mixed-reality\ stack"\r\n\ \ \ \ purpose\ \ \ \ \ \ \ \ \ \ "City-scale\ AR/XR\ orchestration\ with\ hard\ safety,\ ethics,\ and\ neuromorphic\ BCI\ support"\r\n\ \ \ \ license\ \ \ \ \ \ \ \ \ \ "Apache-2\.0"\r\n\ \ END\ META
 
   # =========================
   # ROLE / PROFILE MODEL
@@ -26,7 +18,7 @@ aln SMARTGLASS-AI-CITY
     role                field-operator
     max-risk-score      0.20
     allow-destructive   false
-    ar-scope            "现场 inspection, signage, lane closures, sensor-cal"
+    ar-scope            "çŽ°åœº inspection, signage, lane closures, sensor-cal"
     ui-mode             "Smartglass AR headset"
   END PROFILE
 
@@ -228,3 +220,4 @@ aln SMARTGLASS-AI-CITY
   END FUNCTION
 
 END aln
+

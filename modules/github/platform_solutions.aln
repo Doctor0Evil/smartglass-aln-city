@@ -1,3 +1,4 @@
+﻿aln PLATFORM_SOLUTIONS
 MODULE PLATFORM_SOLUTIONS_GITHUB_ALN
   manifest:
     author_did: did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
@@ -194,7 +195,7 @@ MODULE PLATFORM_SOLUTIONS_GITHUB_ALN
     license: Apache-2.0
     repository: github.com/aln-platform/github-integrations
     community_governance: ALN Foundation oversight with multi-stakeholder voting
-    contribution_process: RFC → Implementation → Review → Merge
+    contribution_process: RFC â†’ Implementation â†’ Review â†’ Merge
   compliance_hooks:
     audit: Record all solution deployments with DID signatures to immutable ledger
     alert: Notify administrators on solution deployment failures or policy violations

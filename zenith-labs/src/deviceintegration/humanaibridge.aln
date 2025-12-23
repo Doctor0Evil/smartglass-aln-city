@@ -1,3 +1,8 @@
+﻿aln HUMANAIBRIDGE
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 // Destination: [translate:zenith-labs/src/deviceintegration/humanaibridge.aln]
 TITLE [translate:Human-AI Device Signal Router (IoT/BCI/Wearable)]
 function integratedeviceinput(deviceid, usersignal, context)
@@ -10,3 +15,4 @@ function integratedeviceinput(deviceid, usersignal, context)
     if hazardlevel > 2 then triggeralert(deviceid, [translate:"hazard"])
     logevent([translate:"signal_routed"], route, deviceid)
 HEX: [translate:5F47B3AE12C88D4E3792]
+

@@ -1,3 +1,8 @@
+﻿aln QPU_DATASHARD_MANAGE
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 [qpu_datashard_manage]
 Processes input:
     - shard_id: string (datashard identifier)
@@ -13,3 +18,4 @@ Enforces logging:
     - Stores logs at: /audit/qpu_datashards/${shard_id}/
 Manages lifecycle: quantum erase/refresh cycles, post-processing verification
 Enforces security_policy: quantum sign-off procedures, cryptographic audits
+

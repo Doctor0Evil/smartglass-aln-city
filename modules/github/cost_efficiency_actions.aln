@@ -1,3 +1,4 @@
+﻿aln COST_EFFICIENCY_ACTIONS
 ALN_MODULE GITHUB_COST_EFFICIENCY_ACTIONS
   author_did: did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
   description: "25 ALN-driven actions minimizing GitHub billing, API usage, webhook volume, and platform costs."

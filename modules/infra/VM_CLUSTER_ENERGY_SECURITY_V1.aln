@@ -1,3 +1,4 @@
+﻿aln VM_CLUSTER_ENERGY_SECURITY_V1
 ALN_MODULE VM_CLUSTER_ENERGY_SECURITY_V1
   source_repos: ["https://github.com/Doctor0Evil/AU-Tech.git","https://github.com/Doctor0Evil/Aegis-Science.git"]
   author_did: did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0

@@ -1,12 +1,6 @@
-aln ALN-ETHICAL-GUARDRAILS
+﻿aln ALN-ETHICAL-GUARDRAILS
   WITHUNIFIEDSYSTEM CITY-GOV-ROOT-2025
-
-  META
-    system-name    Unified-NeuroCyber-Grid
-    version        1.1.0
-    purpose        "Global ethical and safety guardrail enforcement for public infrastructure"
-    license        "Apache-2.0"
-  END META
+\r\n\ \ META\\n\ \ author_did\ \ \ \ did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0\r\n\ \ \ \ system-name\ \ \ \ Unified-NeuroCyber-Grid\r\n\ \ \ \ version\ \ \ \ \ \ \ \ 1\.1\.0\r\n\ \ \ \ purpose\ \ \ \ \ \ \ \ "Global\ ethical\ and\ safety\ guardrail\ enforcement\ for\ public\ infrastructure"\r\n\ \ \ \ license\ \ \ \ \ \ \ \ "Apache-2\.0"\r\n\ \ END\ META
 
   POLICY global-ethics
     forbid-domains     weapons-autonomy, unlawful-surveillance, coercive-psychops
@@ -115,3 +109,4 @@ aln ALN-ETHICAL-GUARDRAILS
   END FUNCTION
 
 END aln
+

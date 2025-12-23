@@ -1,3 +1,8 @@
+﻿aln OBJECTDEFINITIONS
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 // Destination: [translate:zenith-labs/src/core/objectdefinitions.aln]
 TITLE [translate:Advanced Object Class for Biosensing and City Safety]
 objectclass [translate:VirtualNode] {
@@ -21,3 +26,4 @@ objectclass [translate:PhysicalObject] {
     function scansafetyinputs()
 }
 HEX: [translate:8DA4FB222CEA92B1D9A7]
+

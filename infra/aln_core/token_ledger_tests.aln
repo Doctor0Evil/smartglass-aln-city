@@ -1,6 +1,11 @@
+﻿aln TOKEN_LEDGER_TESTS
+  META
+    author_did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+  END META
+
 QPU.DATASHARD:/infra/aln_core/token_ledger_tests.aln
 layer,component,path,language,purpose,content
-core,ledger,crates/aln_core/src/energy_ledger.rs,Rust,"test-only in‑memory ledger","#[cfg(test)]
+core,ledger,crates/aln_core/src/energy_ledger.rs,Rust,"test-only inâ€‘memory ledger","#[cfg(test)]
 use std::collections::HashMap;
 
 #[cfg(test)]
@@ -76,7 +81,7 @@ mod tests {
         assert!(bal_total.erp >= bal_small.erp);
     }
 }"
-core,wasm,crates/aln_core/Cargo.toml,TOML,"CosmWasm‑friendly deps","[dependencies]
+core,wasm,crates/aln_core/Cargo.toml,TOML,"CosmWasmâ€‘friendly deps","[dependencies]
 cosmwasm-std = { version = \"1\", default-features = false, features = [\"staking\"] }
 
 [features]
@@ -92,7 +97,7 @@ optional = true
 
 [package.metadata.wasm]
 wasm-target = \"wasm32-unknown-unknown\""
-core,tests,crates/aln_core/src/energy_ledger_proptest.rs,Rust,"ledger property‑based tests","#![cfg(test)]
+core,tests,crates/aln_core/src/energy_ledger_proptest.rs,Rust,"ledger propertyâ€‘based tests","#![cfg(test)]
 use super::*;
 use proptest::prelude::*;
 use std::collections::HashSet;
@@ -224,3 +229,4 @@ optional = true
 [target.'cfg(not(target_arch = \"wasm32\"))'.dependencies]
 std-only-logger = { version = \"0.1\" }
 "
+

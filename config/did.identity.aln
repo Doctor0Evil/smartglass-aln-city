@@ -1,0 +1,13 @@
+# DID config: canonical public identifier for ALN modules and tooling
+# NOTE: This is a public identifier only — keep signing keys or any private credentials
+# out of the repository (OS keychain, local wallet, or env-based Web5 agent).
+# See docs/aln_validator.md for usage and automation guidance.
+
+aln DID-IDENTITY-CONFIG
+  META
+    canonical-did    did:ion:EiD8J2b3K8k9Q8x9L7m2n4p1q5r6s7t8u9v0w1x2y3z4A5B6C7D8E9F0
+    scope            schema, tooling, automation
+    ownerContact     "ops@smartglass.example"
+    lastRotatedAt    2025-12-23T00:00:00Z
+  END META
+END aln

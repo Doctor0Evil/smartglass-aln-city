@@ -1,4 +1,5 @@
-﻿# Smartglass ALN console
+$content = @'
+# Smartglass ALN console
 aln SMARTGLASS-CORE
 # REVIEW(ALN-LINT): Contains Python-like constructs; requires human review
   WITHUNIFIEDSYSTEM CITY-GOV-ROOT-2025
@@ -113,3 +114,6 @@ aln SMARTGLASS-CORE
   END FUNCTION
 
 END aln
+'@
+Set-Content -Path .\aln\smartglass\smartglass-core.aln -Value $content -Encoding utf8 -Force
+Write-Output "Rewrote smartglass-core.aln with cleaned content"
